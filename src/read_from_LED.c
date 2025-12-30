@@ -31,7 +31,7 @@ int main(){
         scanf("%d", &led_lens[i]);
     }
     
-    FILE *fp = fopen("LED.json", "r");
+    FILE *fp = fopen("gen_blender/LED.json", "r");
     if (!fp){
         printf("Cannot open LED.json\n");
         free(led_lens);
@@ -87,6 +87,17 @@ int main(){
     
     printf("Found %d frames\n", frame_count);
     
+    FILE *bin_fp = fopen("LED.bin", "wb");
+    if (!bin_fp) {
+        printf("Cannot create LED.bin\n");
+        free(led_lens);
+        free(content);
+        return 1;
+    }
+    
+    int *frame_starts = malloc(frame_count * sizeof(int));
+    int *frame_fades = malloc(frame_count * sizeof(int));
+    
     int ****frame_data = malloc(frame_count * sizeof(int ***));
     for (int f = 0; f < frame_count; f++){
         frame_data[f] = malloc(led_count * sizeof(int **));
@@ -97,9 +108,6 @@ int main(){
             }
         }
     }
-    
-    int *frame_starts = malloc(frame_count * sizeof(int));
-    int *frame_fades = malloc(frame_count * sizeof(int));
     
     for (int led_idx = 0; led_idx < led_count; led_idx++){
         char led_key[50];
@@ -170,6 +178,12 @@ int main(){
             status_key++;
             led_ptr = status_key;
             
+            if (led_idx == 0) {
+                fwrite(&frame_starts[frame_idx], sizeof(int), 1, bin_fp);
+                unsigned char fade_byte = (unsigned char)frame_fades[frame_idx];
+                fwrite(&fade_byte, 1, 1, bin_fp);
+            }
+            
             for (int pixel_idx = 0; pixel_idx < led_lens[led_idx]; pixel_idx++){
                 skip_whitespace(&led_ptr);
                 
@@ -178,12 +192,15 @@ int main(){
                            pixel_idx, frame_idx, led_idx);
                     break;
                 }
-                
                 led_ptr++;
                 skip_whitespace(&led_ptr);
                 
                 for (int rgb_idx = 0; rgb_idx < 3; rgb_idx++){
-                    frame_data[frame_idx][led_idx][pixel_idx][rgb_idx] = read_number(&led_ptr);
+                    int color_value = read_number(&led_ptr);
+                    frame_data[frame_idx][led_idx][pixel_idx][rgb_idx] = color_value;
+                    
+                    unsigned char color_byte = (unsigned char)color_value;
+                    fwrite(&color_byte, 1, 1, bin_fp);
                     
                     skip_whitespace(&led_ptr);
                     if (rgb_idx < 2 && *led_ptr == ','){
@@ -195,7 +212,7 @@ int main(){
                 skip_whitespace(&led_ptr);
                 if (*led_ptr == ','){
                     led_ptr++;
-                    read_number(&led_ptr); 
+                    read_number(&led_ptr);
                 }
                 
                 skip_whitespace(&led_ptr);
@@ -232,6 +249,8 @@ int main(){
         ptr = led_ptr;
     }
     
+    fclose(bin_fp);
+    
     for (int frame_idx = 0; frame_idx < frame_count; frame_idx++){
         printf("\nframe %d:\n", frame_idx + 1);
         printf("start: %d\n", frame_starts[frame_idx]);
@@ -243,12 +262,12 @@ int main(){
                 int g = frame_data[frame_idx][led_idx][pixel_idx][1];
                 int b = frame_data[frame_idx][led_idx][pixel_idx][2];
                 
-                printf("[%d %d %d] ", r, g, b);
+                printf("%d %d %d ", r, g, b);
             }
             printf("\n");
         }
     }
-    
+
     for (int f = 0; f < frame_count; f++){
         for (int l = 0; l < led_count; l++){
             for (int p = 0; p < led_lens[l]; p++){
@@ -263,5 +282,7 @@ int main(){
     free(frame_fades);
     free(led_lens);
     free(content);
+    
+    printf("\nBinary data written to LED.bin\n");
     return 0;
 }
