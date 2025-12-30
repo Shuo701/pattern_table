@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
     scanf("%d", &led_count);
     
     int *led_lens = malloc(led_count * sizeof(int));
-    printf("Enter number of pixels for each LED:\n");
+    printf("Enter number of pixels for each LED\n");
     for (int i = 0; i < led_count; i++){
         printf("LED%d: ", i);
         scanf("%d", &led_lens[i]);
@@ -248,7 +248,6 @@ int main(int argc, char *argv[]){
         fprintf(txt_fp, "frame %d\n", frame_idx + 1);
         fprintf(txt_fp, "start: %d\n", frame_starts[frame_idx]);
         fprintf(txt_fp, "fade : %s\n", frame_fades[frame_idx] ? "true" : "false");
-        fprintf(txt_fp, "leds : %d\n", led_count);
         
         for (int led_idx = 0; led_idx < led_count; led_idx++){
             for (int pixel_idx = 0; pixel_idx < led_lens[led_idx]; pixel_idx++){
@@ -256,10 +255,7 @@ int main(int argc, char *argv[]){
                 int g = frame_data[frame_idx][led_idx][pixel_idx][1];
                 int b = frame_data[frame_idx][led_idx][pixel_idx][2];
                 
-                fprintf(txt_fp, "%d %d %d", r, g, b);
-                if (pixel_idx < led_lens[led_idx] - 1) {
-                    fprintf(txt_fp, ", ");
-                }
+                fprintf(txt_fp, "%d %d %d ", r, g, b);
             }
             
             if (led_idx < led_count - 1) {
@@ -278,7 +274,6 @@ int main(int argc, char *argv[]){
         printf("\nframe %d:\n", frame_idx + 1);
         printf("start: %d\n", frame_starts[frame_idx]);
         printf("fade : %s\n", frame_fades[frame_idx] ? "true" : "false");
-        printf("leds : %d\n", led_count);
         
         for (int led_idx = 0; led_idx < led_count; led_idx++){
             for (int pixel_idx = 0; pixel_idx < led_lens[led_idx]; pixel_idx++){

@@ -1,24 +1,19 @@
 import json
+import random
+
 brightness = 150
 frames = [
-    # [r, g, b, a]
-    [255, 0, 0, brightness],  # red
-    [255, 255, 0, brightness],  # yellow
-    [0, 255, 0, brightness],  # green
-    [0, 255, 255, brightness],  # cyan
-    [0, 0, 255, brightness],  # blue
-    [255, 0, 255, brightness],  # purple
-    [255, 0, 0, brightness],  # red
+    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(7)
 ]
+
 TIME = 1000
 FADE = True
-
 LED_LEN = 100
 
 # control.json
 control = {"fps": 30, "OFPARTS": {}, "LEDPARTS": {}}
 
-for i in range(35):
+for i in range(40):
     control["OFPARTS"][f"OF{i}"] = i
 
 for i in range(8):
@@ -33,7 +28,7 @@ OF = []
 
 for i, frame in enumerate(frames):
     status = {}
-    for j in range(35):
+    for j in range(40):
         status[f"OF{j}"] = frame
     OF.append({"start": i * TIME, "fade": FADE, "status": status})
 

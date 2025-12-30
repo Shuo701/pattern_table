@@ -235,15 +235,7 @@ int main(int argc, char *argv[]) {
             fprintf(txt_fp, "fade : %s\n", fade ? "true" : "false");
             
             for (int i = 0; i < of_count; i++){
-                fprintf(txt_fp, "%d %d %d", colors[i][0], colors[i][1], colors[i][2]);
-                
-                if (i < of_count - 1) {
-                    fprintf(txt_fp, ", ");
-                    
-                    if ((i + 1) % 10 == 0) {
-                        fprintf(txt_fp, "\n");
-                    }
-                }
+                fprintf(txt_fp, "%d %d %d ", colors[i][0], colors[i][1], colors[i][2]);
             }
             
             if (frame_num < total_frames + 1){
@@ -256,7 +248,7 @@ int main(int argc, char *argv[]) {
             
             //print color
             for (int i = 0; i < of_count; i++){
-                printf("%d %d %d", colors[i][0], colors[i][1], colors[i][2]);
+                printf("[%d %d %d]", colors[i][0], colors[i][1], colors[i][2]);
                 
                 if (i < of_count - 1) {
                     printf(", ");
