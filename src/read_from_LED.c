@@ -19,7 +19,15 @@ int read_number(char **ptr){
     return num;
 }
 
-int main(){
+int main(int argc, char *argv[]){
+    if (argc != 3) {
+        printf("Usage: %s <input_json_file> <output_txt_file>\n", argv[0]);
+        return 1;
+    }
+    
+    char *input_file = argv[1];
+    char *output_file = argv[2];
+    
     int led_count;
     printf("Enter number of LEDs: ");
     scanf("%d", &led_count);
@@ -31,9 +39,9 @@ int main(){
         scanf("%d", &led_lens[i]);
     }
     
-    FILE *fp = fopen("gen_blender/LED.json", "r");
+    FILE *fp = fopen(input_file, "r");
     if (!fp){
-        printf("Cannot open LED.json\n");
+        printf("Cannot open %s\n", input_file);
         free(led_lens);
         return 1;
     }
@@ -84,12 +92,11 @@ int main(){
         if (*temp == ',') temp++;
         skip_whitespace(&temp);
     }
-    
     printf("Found %d frames\n", frame_count);
     
-    FILE *bin_fp = fopen("LED.bin", "wb");
-    if (!bin_fp) {
-        printf("Cannot create LED.bin\n");
+    FILE *txt_fp = fopen(output_file, "w");
+    if (!txt_fp) {
+        printf("Cannot create %s\n", output_file);
         free(led_lens);
         free(content);
         return 1;
@@ -124,7 +131,6 @@ int main(){
             printf("Invalid LED%d format\n", led_idx);
             continue;
         }
-        
         led_ptr++;
         
         for (int frame_idx = 0; frame_idx < frame_count; frame_idx++){
@@ -178,12 +184,6 @@ int main(){
             status_key++;
             led_ptr = status_key;
             
-            if (led_idx == 0) {
-                fwrite(&frame_starts[frame_idx], sizeof(int), 1, bin_fp);
-                unsigned char fade_byte = (unsigned char)frame_fades[frame_idx];
-                fwrite(&fade_byte, 1, 1, bin_fp);
-            }
-            
             for (int pixel_idx = 0; pixel_idx < led_lens[led_idx]; pixel_idx++){
                 skip_whitespace(&led_ptr);
                 
@@ -198,9 +198,6 @@ int main(){
                 for (int rgb_idx = 0; rgb_idx < 3; rgb_idx++){
                     int color_value = read_number(&led_ptr);
                     frame_data[frame_idx][led_idx][pixel_idx][rgb_idx] = color_value;
-                    
-                    unsigned char color_byte = (unsigned char)color_value;
-                    fwrite(&color_byte, 1, 1, bin_fp);
                     
                     skip_whitespace(&led_ptr);
                     if (rgb_idx < 2 && *led_ptr == ','){
@@ -225,14 +222,12 @@ int main(){
                     led_ptr++;
                 }
             }
-            
             while (*led_ptr && *led_ptr != ']'){
                 led_ptr++;
             }
             if (*led_ptr == ']'){
                 led_ptr++;
             }
-            
             skip_whitespace(&led_ptr);
             while (*led_ptr && *led_ptr != '}'){
                 led_ptr++;
@@ -240,7 +235,6 @@ int main(){
             if (*led_ptr == '}'){
                 led_ptr++;
             }
-            
             skip_whitespace(&led_ptr);
             if (*led_ptr == ','){
                 led_ptr++;
@@ -249,12 +243,12 @@ int main(){
         ptr = led_ptr;
     }
     
-    fclose(bin_fp);
-    
+    //write txt
     for (int frame_idx = 0; frame_idx < frame_count; frame_idx++){
-        printf("\nframe %d:\n", frame_idx + 1);
-        printf("start: %d\n", frame_starts[frame_idx]);
-        printf("fade: %s\n", frame_fades[frame_idx] ? "true" : "false");
+        fprintf(txt_fp, "frame %d\n", frame_idx + 1);
+        fprintf(txt_fp, "start: %d\n", frame_starts[frame_idx]);
+        fprintf(txt_fp, "fade : %s\n", frame_fades[frame_idx] ? "true" : "false");
+        fprintf(txt_fp, "leds : %d\n", led_count);
         
         for (int led_idx = 0; led_idx < led_count; led_idx++){
             for (int pixel_idx = 0; pixel_idx < led_lens[led_idx]; pixel_idx++){
@@ -262,12 +256,50 @@ int main(){
                 int g = frame_data[frame_idx][led_idx][pixel_idx][1];
                 int b = frame_data[frame_idx][led_idx][pixel_idx][2];
                 
-                printf("%d %d %d ", r, g, b);
+                fprintf(txt_fp, "%d %d %d", r, g, b);
+                if (pixel_idx < led_lens[led_idx] - 1) {
+                    fprintf(txt_fp, ", ");
+                }
             }
-            printf("\n");
+            
+            if (led_idx < led_count - 1) {
+                fprintf(txt_fp, "\n");
+            }
+        }
+        
+        if (frame_idx < frame_count - 1) {
+            fprintf(txt_fp, "\n\n");
         }
     }
-
+    
+    fclose(txt_fp);
+    
+    for (int frame_idx = 0; frame_idx < frame_count; frame_idx++){
+        printf("\nframe %d:\n", frame_idx + 1);
+        printf("start: %d\n", frame_starts[frame_idx]);
+        printf("fade : %s\n", frame_fades[frame_idx] ? "true" : "false");
+        printf("leds : %d\n", led_count);
+        
+        for (int led_idx = 0; led_idx < led_count; led_idx++){
+            for (int pixel_idx = 0; pixel_idx < led_lens[led_idx]; pixel_idx++){
+                int r = frame_data[frame_idx][led_idx][pixel_idx][0];
+                int g = frame_data[frame_idx][led_idx][pixel_idx][1];
+                int b = frame_data[frame_idx][led_idx][pixel_idx][2];
+                
+                printf("%d %d %d", r, g, b);
+                
+                if (pixel_idx < led_lens[led_idx] - 1) {
+                    printf(", ");
+                }
+            }
+            
+            if (led_idx < led_count - 1) {
+                printf("\n\n");
+            }
+        }
+        printf("\n");
+    }
+    
     for (int f = 0; f < frame_count; f++){
         for (int l = 0; l < led_count; l++){
             for (int p = 0; p < led_lens[l]; p++){
@@ -283,6 +315,6 @@ int main(){
     free(led_lens);
     free(content);
     
-    printf("\nBinary data written to LED.bin\n");
+    printf("\nText data written to %s\n", output_file);
     return 0;
 }

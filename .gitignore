@@ -1,0 +1,10 @@
+
+*.bin
+*.exe
+*.txt
+
+*.o
+*.obj
+
+*.log
+.DS_Store

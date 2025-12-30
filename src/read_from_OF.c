@@ -165,21 +165,29 @@ int parse_frame(char **ptr, int of_count, int *start_time, int *fade, int colors
     return 0;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s <input_json_file> <output_txt_file>\n", argv[0]);
+        return 1;
+    }
+    
+    char *input_file = argv[1];
+    char *output_file = argv[2];
+    
     //input OF_num
     int of_count;
     printf("OF num: ");
     scanf("%d", &of_count);
     
-    FILE *fp = fopen("gen_blender/OF.json", "r");
+    FILE *fp = fopen(input_file, "r");
     if (!fp){
-        printf("can't open OF.json\n");
+        printf("can't open %s\n", input_file);
         return 1;
     }
     
-    FILE *bin_fp = fopen("OF.bin", "wb");
-    if (!bin_fp) {
-        printf("can't create OF.bin\n");
+    FILE *txt_fp = fopen(output_file, "w");
+    if (!txt_fp) {
+        printf("can't create %s\n", output_file);
         return 1;
     }
 
@@ -194,7 +202,7 @@ int main() {
     char *ptr = content;
     skip_whitespace(&ptr);
     
-    ptr++; //skip '['
+    ptr++;
     
     int frame_num = 1;
     
@@ -221,36 +229,44 @@ int main() {
         }
         
         //detect a frame
-        if (parse_frame(&ptr, of_count, &start_time, &fade, colors)) {
+        if (parse_frame(&ptr, of_count, &start_time, &fade, colors)){
+            fprintf(txt_fp, "frame %d:\n", frame_num);
+            fprintf(txt_fp, "start: %d\n", start_time);
+            fprintf(txt_fp, "fade : %s\n", fade ? "true" : "false");
+            
+            for (int i = 0; i < of_count; i++){
+                fprintf(txt_fp, "%d %d %d", colors[i][0], colors[i][1], colors[i][2]);
+                
+                if (i < of_count - 1) {
+                    fprintf(txt_fp, ", ");
+                    
+                    if ((i + 1) % 10 == 0) {
+                        fprintf(txt_fp, "\n");
+                    }
+                }
+            }
+            
+            if (frame_num < total_frames + 1){
+                fprintf(txt_fp, "\n\n");
+            }
+            
             printf("frame %d:\n", frame_num);
             printf("start: %d\n", start_time);
-            printf("fade: %s\n", fade ? "true" : "false");
+            printf("fade : %s\n", fade ? "true" : "false");
             
-            // 1. Write start time (4 bytes)
-            fwrite(&start_time, sizeof(int), 1, bin_fp);
-            
-            // 2. Write fade (1 byte)
-            unsigned char fade_byte = (unsigned char)fade;
-            fwrite(&fade_byte, 1, 1, bin_fp);
-            
-            // 3. Write all colors (3 bytes per OF)
-            for (int i = 0; i < of_count; i++){
-                unsigned char r = (unsigned char)colors[i][0];
-                unsigned char g = (unsigned char)colors[i][1];
-                unsigned char b = (unsigned char)colors[i][2];
-                fwrite(&r, 1, 1, bin_fp);
-                fwrite(&g, 1, 1, bin_fp);
-                fwrite(&b, 1, 1, bin_fp);
-            }
-
             //print color
             for (int i = 0; i < of_count; i++){
-                printf("%d %d %d\n", colors[i][0], colors[i][1], colors[i][2]);
+                printf("%d %d %d", colors[i][0], colors[i][1], colors[i][2]);
+                
+                if (i < of_count - 1) {
+                    printf(", ");
+                }
             }
             
             frame_num++;
             total_frames++;
-            printf("\n");
+            printf("\n\n");
+            fprintf(txt_fp, "\n\n");
             fflush(stdout);
         }
         else{
@@ -262,8 +278,10 @@ int main() {
         if (*ptr == ',') ptr++;
     }
     
-    fclose(bin_fp);
+    fclose(txt_fp);
     free(colors);
     free(content);
+    
+    printf("\nText data written to %s\n", output_file);
     return 0;
 }
