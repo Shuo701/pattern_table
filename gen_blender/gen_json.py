@@ -3,10 +3,10 @@ import random
 
 brightness = 150
 frames = [
-    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(7)
+    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(80000)
 ]
 
-TIME = 1000
+TIME = 100
 FADE = True
 LED_LEN = 100
 
