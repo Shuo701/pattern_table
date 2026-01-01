@@ -1,5 +1,19 @@
 # LED Pattern Generator Pipeline
 
+## 基本使用
+
+```
+# 給予執行權限
+chmod +x pattern_pipeline.sh
+
+# 執行管線
+bash ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
+
+# 範例
+bash ./pattern_pipeline.sh gen_blender output
+```
+
+
 ## 架構
 ```
 src/                    # 原始碼目錄
@@ -87,7 +101,7 @@ LED資料 = ∑(LED_bulbs[i]) × [RGB]
 
 ## 使用方法
 
-### 基本使用
+### 使用
 
 ```
 bash
@@ -95,10 +109,10 @@ bash
 chmod +x pattern_pipeline.sh
 
 # 執行管線
-./run_pipeline.sh <輸入目錄> <輸出目錄>
+./pattern_pipeline.sh <輸入目錄> <輸出目錄>
 
 # 範例
-./run_pipeline.sh gen_blender output
+./pattern_pipeline.sh gen_blender output
 ```
 
 ### 2. 逐步執行
