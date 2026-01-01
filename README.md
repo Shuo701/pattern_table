@@ -2,6 +2,7 @@
 
 ## 基本使用
 
+輸出 control.bin, frame.bin
 ```
 # 給予執行權限
 chmod +x pattern_pipeline.sh
@@ -12,7 +13,10 @@ bash ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
 # 範例
 bash ./pattern_pipeline.sh gen_blender output
 ```
-
+查看bin內容
+```
+python test.py frame.bin
+```
 
 ## 架構
 ```
@@ -153,7 +157,7 @@ head -20 output/OF.txt
 
 ## 管線流程圖
 ```
-[ control.json ] ───▶ ( read_control ) ───▶ [ control.bin ]
+[ control.json ] ───▶ ( read_control ) ───▶ [ control.bin ] ───▶
                                                  │
                                                  ▼
 [ of.json ]      ───▶ ( read_OF )      ───▶ [ OF.txt ]
@@ -162,5 +166,5 @@ head -20 output/OF.txt
 [ led.json ]     ───▶ ( read_LED )     ───▶ [ LED.txt ]
                                                  │
                                                  ▼
-                                          ( merge_frame ) ───▶ [ frame.bin ]
+                                          ( merge_frame ) ───▶ [ frame.bin ] ───▶
 ```

@@ -1,5 +1,21 @@
 import sys
 
-with open(sys.argv[1], 'rb') if len(sys.argv) > 1 else open('Frame.bin', 'rb') as f:
-    for i, byte in enumerate(f.read()):
-        print(f"{byte}", end=' ')
+if len(sys.argv) > 1:
+    filename = sys.argv[1]
+else:
+    filename = input("Enter filename to read (default: Frame.bin): ")
+    if filename == "":
+        filename = "Frame.bin"
+
+try:
+    # Read and print bytes
+    with open(filename, 'rb') as f:
+        for i, byte in enumerate(f.read()):
+            print(f"{byte}", end=' ')
+    
+    print(f"\n\nFile '{filename}' read successfully.")
+    
+except FileNotFoundError:
+    print(f"Error: File '{filename}' not found.")
+except Exception as e:
+    print(f"Error reading file: {e}")
