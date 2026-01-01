@@ -8,3 +8,7 @@
 
 *.log
 .DS_Store
+
+output/
+outputs/
+gen_blender/

@@ -13,10 +13,10 @@ LED_LEN = 100
 # control.json
 control = {"fps": 30, "OFPARTS": {}, "LEDPARTS": {}}
 
-for i in range(40):
+for i in range(20):
     control["OFPARTS"][f"OF{i}"] = i
 
-for i in range(8):
+for i in range(5):
     control["LEDPARTS"][f"LED{i}"] = {"id": i, "len": LED_LEN}
 
 with open("control.json", "w") as f:
