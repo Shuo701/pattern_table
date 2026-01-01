@@ -59,25 +59,31 @@ status: 每個 LED 的像素顏色陣列
 
 每個動畫幀的結構：
 
-```
 [幀資料] = [幀頭] + [OF資料] + [LED資料]
+
+```
 幀頭結構 (4 bytes):
-偏移量	大小	說明
-0-2	3 bytes	start_time (24-bit 無號整數)
-3	1 byte	fade (0=false, 1=true)
+偏移量	    大小	        說明
+0-2	    3 bytes	    start_time (24-bit 無號整數)
+3	    1 byte	    fade (0=false, 1=true)
 ```
 
 #### OF資料結構:
-
+```
 OF資料 = OF_num × [RGB]
 每個 RGB = 3 bytes (R, G, B)
+```
 
 #### LED資料結構:
+```
 LED資料 = ∑(LED_bulbs[i]) × [RGB]
 每個 RGB = 3 bytes (R, G, B)
+```
 
 #### 完整幀大小計算:
+```
 幀大小 = 4 + (OF_num × 3) + (總LED燈泡數 × 3)
+```
 
 ## 使用方法
 
@@ -86,7 +92,7 @@ LED資料 = ∑(LED_bulbs[i]) × [RGB]
 ```
 bash
 # 給予執行權限
-chmod +x run_pipeline.sh
+chmod +x pattern_pipeline.sh
 
 # 執行管線
 ./run_pipeline.sh <輸入目錄> <輸出目錄>
@@ -120,7 +126,7 @@ src/merge_frame output/OF.txt output/LED.txt output/control.bin output/frame.bin
 
 ### 3. 檢查輸出
 
-bash
+```
 # 檢查 control.bin
 hexdump -C output/control.bin
 
@@ -129,7 +135,9 @@ ls -lh output/frame.bin
 
 # 查看文字檔
 head -20 output/OF.txt
-管線流程圖
+```
+
+## 管線流程圖
 ```
 [ control.json ] ───▶ ( read_control ) ───▶ [ control.bin ]
                                                  │
