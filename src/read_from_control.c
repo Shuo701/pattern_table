@@ -234,10 +234,14 @@ int count_led_items_and_get_lens(char *start, int **len_array){
     return count;
 }
 
-int main(){
-    FILE *fp = fopen("gen_blender/control.json", "r");
+int main(int argc, char *argv[]){
+    if (argc < 3) {
+        printf("Usage: %s <input_Control.json> <output_Control.bin>\n", argv[0]);
+        return 1;
+    }
+    FILE *fp = fopen(argv[1], "r");
     if (!fp){
-        printf("can't open control.json\n");
+        printf("can't open input_Control.json\n");
         return 1;
     }
     fseek(fp, 0, SEEK_END);
@@ -283,9 +287,9 @@ int main(){
     }
 
     free(content);
-    FILE *out = fopen("Control.bin", "wb");
+    FILE *out = fopen(argv[2], "wb");
     if (!out){
-        printf("can't construct Control.bin\n");
+        printf("can't construct output_Control.bin\n");
         if (led_lens) free(led_lens);
         return 1;
     }
@@ -308,7 +312,7 @@ int main(){
     
     fclose(out);
 
-    printf("\nresult in output.bin\n");
+    printf("\nresult in %s\n", argv[2]);
     printf("fps = %d\n", fps);
     printf("OFPARTS num = %d\n", of_count);
     printf("LEDPARTS num = %d\n", led_count);
@@ -317,7 +321,7 @@ int main(){
         printf("LED len : ");
         for (int i = 0; i < led_count; i++){
             printf("%d", led_lens[i]);
-            if (i < led_count - 1) printf(", ");
+            if (i < led_count - 1) printf(" ");
         }
         printf("\n\n");
     }

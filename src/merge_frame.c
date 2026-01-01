@@ -40,10 +40,21 @@ int find_keyword_in_file(FILE *fp, const char *keyword){
     return 0;
 }
 
-int main(){
-    FILE *of_file = fopen("OF.txt", "r");
-    FILE *led_file = fopen("LED.txt", "r");
-    FILE *out_file = fopen("frame.bin", "wb");
+int main(int argc, char *argv[]){
+    if (argc != 5) {
+        printf("Usage: %s <OF.txt> <LED.txt> <control.bin> <frame.bin>\n", argv[0]);
+        return 1;
+    }
+    
+    char *of_txt_file = argv[1];
+    char *led_txt_file = argv[2];
+    char *control_file = argv[3];
+    char *frame_bin_file = argv[4];
+
+    FILE *of_file = fopen(of_txt_file, "r");
+    FILE *led_file = fopen(led_txt_file, "r");
+    FILE *control_fp = fopen(control_file, "rb");
+    FILE *out_file = fopen(frame_bin_file, "wb");
     
     if (!of_file){
         printf("can't open OF.txt\n");
@@ -61,33 +72,52 @@ int main(){
         return 1;
     }
     
-    int OF_num, LED_num;
-    printf("input OF_num: ");
-    scanf("%d", &OF_num);
-    printf("input LED_num: ");
-    scanf("%d", &LED_num);
-    
-    int *LED_bulb = malloc(LED_num * sizeof(int));
-    if (!LED_bulb){
-        printf("fail to buffer\n");
+    int OF_num = 0, LED_num = 0;
+    int *LED_bulb = NULL;
+
+    if (!control_fp) {
+        printf("Cannot open %s\n", control_file);
         fclose(of_file);
         fclose(led_file);
         fclose(out_file);
         return 1;
     }
-    
-    printf("num of LED_bulb[%d]: ", LED_num);
-    for (int i = 0; i < LED_num; i++){
-        if (scanf("%d", &LED_bulb[i]) != 1){
-            printf("wrong input\n");
-            free(LED_bulb);
-            fclose(of_file);
-            fclose(led_file);
-            fclose(out_file);
-            return 1;
+
+    unsigned char fps;
+    fread(&fps, 1, 1, control_fp);
+
+    unsigned char of_num_byte;
+    fread(&of_num_byte, 1, 1, control_fp); //OF_num
+    OF_num = (int)of_num_byte;
+
+    unsigned char led_num_byte;
+    fread(&led_num_byte, 1, 1, control_fp); //LED_num
+    LED_num = (int)led_num_byte;
+
+    printf("OF_num from %s: %d\n", control_file, OF_num);
+    printf("LED_num from %s: %d\n", control_file, LED_num);
+
+    if (LED_num > 0){
+        LED_bulb = malloc(LED_num * sizeof(int));
+        
+        for (int i = 0; i < LED_num; i++){
+            unsigned char bulb_byte;
+            fread(&bulb_byte, 1, 1, control_fp);
+            LED_bulb[i] = (int)bulb_byte;
+            printf("LED%d bulbs: %d\n", i, LED_bulb[i]); //LED_bulb [ LED_num ]
         }
     }
-    
+    fclose(control_fp);
+
+    if (LED_num > 0 && LED_bulb == NULL){
+        printf("Error: Failed to allocate memory for LED bulbs\n");
+        fclose(of_file);
+        fclose(led_file);
+        fclose(out_file);
+        return 1;
+    }
+
+
     int frame_count = 0;
     rewind(of_file);
     rewind(led_file);

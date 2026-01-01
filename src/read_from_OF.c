@@ -166,18 +166,27 @@ int parse_frame(char **ptr, int of_count, int *start_time, int *fade, int colors
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <input_json_file> <output_txt_file>\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s <input_OF.json> <input_Control.bin> <output_OF.txt>\n", argv[0]);
         return 1;
     }
     
     char *input_file = argv[1];
-    char *output_file = argv[2];
+    char *control_file = argv[2];
+    char *output_file = argv[3];
     
     //input OF_num
-    int of_count;
-    printf("OF num: ");
-    scanf("%d", &of_count);
+    int of_count = 0;
+    FILE *control_fp = fopen(control_file, "rb");
+    if (!control_fp) {
+        printf("can't open %s\n", control_file);
+        return 1;
+    }
+    unsigned char fps;
+    fread(&fps, 1, 1, control_fp);
+    fread(&of_count, 1, 1, control_fp); //read second byte (OF_num)
+    fclose(control_fp);
+    printf("OF num from %s: %d\n", control_file, of_count);
     
     FILE *fp = fopen(input_file, "r");
     if (!fp){

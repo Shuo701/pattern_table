@@ -20,25 +20,50 @@ int read_number(char **ptr){
 }
 
 int main(int argc, char *argv[]){
-    if (argc != 3) {
-        printf("Usage: %s <input_json_file> <output_txt_file>\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s <input_LED.json> <input_Control.bin> <output_LED.txt>\n", argv[0]);
         return 1;
     }
     
     char *input_file = argv[1];
-    char *output_file = argv[2];
+    char *control_file = argv[2];
+    char *output_file = argv[3];
     
-    int led_count;
-    printf("Enter number of LEDs: ");
-    scanf("%d", &led_count);
-    
-    int *led_lens = malloc(led_count * sizeof(int));
-    printf("Enter number of pixels for each LED\n");
-    for (int i = 0; i < led_count; i++){
-        printf("LED%d: ", i);
-        scanf("%d", &led_lens[i]);
+    int led_count = 0;
+    int *led_lens = NULL;
+
+    FILE *control_fp = fopen(control_file, "rb");
+    if (!control_fp) {
+        printf("Cannot open %s\n", control_file);
+        return 1;
     }
+
+    fseek(control_fp, 2, SEEK_SET);
+    unsigned char led_count_byte;
+    fread(&led_count_byte, 1, 1, control_fp); //read third byte (LED_num)
+    led_count = (int)led_count_byte;
     
+    printf("LED count from %s: %d\n", control_file, led_count);
+
+    if (led_count > 0){
+        led_lens = malloc(led_count * sizeof(int));
+        
+        for (int i = 0; i < led_count; i++){
+            unsigned char len_byte;
+            fread(&len_byte, 1, 1, control_fp);
+            led_lens[i] = (int)len_byte;
+            printf("LED%d bulbs: %d\n", i, led_lens[i]);
+        }
+    }
+    fclose(control_fp);
+
+    if (led_count == 0 || led_lens == NULL){
+        printf("Error: No LED data found in %s\n", control_file);
+        if (led_lens) free(led_lens);
+        return 1;
+    }
+
+
     FILE *fp = fopen(input_file, "r");
     if (!fp){
         printf("Cannot open %s\n", input_file);
@@ -281,7 +306,7 @@ int main(int argc, char *argv[]){
                 int g = frame_data[frame_idx][led_idx][pixel_idx][1];
                 int b = frame_data[frame_idx][led_idx][pixel_idx][2];
                 
-                printf("%d %d %d", r, g, b);
+                printf("[%d %d %d]", r, g, b);
                 
                 if (pixel_idx < led_lens[led_idx] - 1) {
                     printf(", ");
