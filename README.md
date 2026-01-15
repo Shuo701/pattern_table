@@ -4,9 +4,6 @@
 ### 1. 環境準備
 ```
 chmod +x pattern_pipeline.sh
-```
-### 2. 使用
-```
 ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
 
 # 範例
