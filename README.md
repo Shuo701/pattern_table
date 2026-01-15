@@ -4,10 +4,10 @@
 ### 1. 環境準備
 ```
 chmod +x pattern_pipeline.sh
-basn ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
+bash ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
 
 # 範例
-basn ./pattern_pipeline.sh gen_blender/ output/
+bash ./pattern_pipeline.sh gen_blender/ output/
 ```
 
 ## 架構
@@ -28,10 +28,10 @@ bash
 chmod +x pattern_pipeline.sh
 
 # 執行管線
-basn ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
+bash ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
 
 # 範例
-basn ./pattern_pipeline.sh gen_blender output
+bash ./pattern_pipeline.sh gen_blender output
 ```
 
 ### 2. 逐步執行
