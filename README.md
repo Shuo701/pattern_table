@@ -67,7 +67,7 @@ src/merge_frame output/OF.txt output/LED.txt output/control.dat output/frame.dat
 
 ## 管線流程圖
 ```
-[ control.json ] ───▶ ( read_control ) ───▶ [ control.dat ] ───▶
+[ control.json ] ───▶ ( read_control ) ──────────────────────▶ [ control.dat ]
                                                  │
                                                  ▼
 [ of.json ]      ───▶ ( read_OF )      ───▶ [ OF.txt ]
@@ -76,5 +76,5 @@ src/merge_frame output/OF.txt output/LED.txt output/control.dat output/frame.dat
 [ led.json ]     ───▶ ( read_LED )     ───▶ [ LED.txt ]
                                                  │
                                                  ▼
-                                          ( merge_frame ) ───▶ [ frame.dat ] ───▶
+                                          ( merge_frame ) ───▶ [ frame.dat ]
 ```
