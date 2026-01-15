@@ -78,10 +78,3 @@ src/merge_frame output/OF.txt output/LED.txt output/control.dat output/frame.dat
                                                  ▼
                                           ( merge_frame ) ───▶ [ frame.dat ] ───▶
 ```
-```
-graph LR
-    A[control.json] --> B(read_control) --> C[control.bin]
-    C --> D(read_OF/LED)
-    E[of.json / led.json] --> D --> F[OF.txt / LED.txt]
-    F --> G(merge_frame) --> H[frame.bin]
-```
