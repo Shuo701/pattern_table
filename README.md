@@ -14,12 +14,12 @@ chmod +x pattern_pipeline.sh
 ./pattern_pipeline.sh <輸入目錄> <輸出目錄>
 
 # 範例
-./pattern_pipeline.sh gen_blender output
+./pattern_pipeline.sh gen_blender/ output/
 ```
 
 ## 架構
 ```
-src/                    # 原始碼目錄
+src/                       # 原始碼目錄
 ├── read_from_control.c    # 讀取 control.json → control.dat
 ├── read_from_OF.c         # 讀取 of.json + control.dat → OF.txt
 ├── read_from_LED.c        # 讀取 led.json + control.dat → LED.txt
@@ -78,3 +78,9 @@ src/merge_frame output/OF.txt output/LED.txt output/control.dat output/frame.dat
                                                  ▼
                                           ( merge_frame ) ───▶ [ frame.dat ] ───▶
 ```
+
+graph LR
+    A[control.json] --> B(read_control) --> C[control.bin]
+    C --> D(read_OF/LED)
+    E[of.json / led.json] --> D --> F[OF.txt / LED.txt]
+    F --> G(merge_frame) --> H[frame.bin]
