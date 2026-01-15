@@ -3,10 +3,6 @@
 ## 快速開始
 ### 1. 環境準備
 ```
-gcc -o src/read_control src/read_from_control.c
-gcc -o src/read_OF src/read_from_OF.c
-gcc -o src/read_LED src/read_from_LED.c
-gcc -o src/merge_frame src/merge_frame.c
 chmod +x pattern_pipeline.sh
 ```
 ### 2. 使用
