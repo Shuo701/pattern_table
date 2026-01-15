@@ -167,7 +167,7 @@ int parse_frame(char **ptr, int of_count, int *start_time, int *fade, int colors
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        printf("Usage: %s <input_OF.json> <input_Control.bin> <output_OF.txt>\n", argv[0]);
+        printf("Usage: %s <input_OF.json> <input_Control.dat> <output_OF.txt>\n", argv[0]);
         return 1;
     }
     

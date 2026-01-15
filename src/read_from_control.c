@@ -236,7 +236,7 @@ int count_led_items_and_get_lens(char *start, int **len_array){
 
 int main(int argc, char *argv[]){
     if (argc < 3) {
-        printf("Usage: %s <input_Control.json> <output_Control.bin>\n", argv[0]);
+        printf("Usage: %s <input_Control.json> <output_Control.dat>\n", argv[0]);
         return 1;
     }
     FILE *fp = fopen(argv[1], "r");
@@ -289,7 +289,7 @@ int main(int argc, char *argv[]){
     free(content);
     FILE *out = fopen(argv[2], "wb");
     if (!out){
-        printf("can't construct output_Control.bin\n");
+        printf("can't construct output_Control.dat\n");
         if (led_lens) free(led_lens);
         return 1;
     }

@@ -42,19 +42,19 @@ int find_keyword_in_file(FILE *fp, const char *keyword){
 
 int main(int argc, char *argv[]){
     if (argc != 5) {
-        printf("Usage: %s <OF.txt> <LED.txt> <control.bin> <frame.bin>\n", argv[0]);
+        printf("Usage: %s <OF.txt> <LED.txt> <control.dat> <frame.dat>\n", argv[0]);
         return 1;
     }
     
     char *of_txt_file = argv[1];
     char *led_txt_file = argv[2];
     char *control_file = argv[3];
-    char *frame_bin_file = argv[4];
+    char *frame_dat_file = argv[4];
 
     FILE *of_file = fopen(of_txt_file, "r");
     FILE *led_file = fopen(led_txt_file, "r");
     FILE *control_fp = fopen(control_file, "rb");
-    FILE *out_file = fopen(frame_bin_file, "wb");
+    FILE *out_file = fopen(frame_dat_file, "wb");
     
     if (!of_file){
         printf("can't open OF.txt\n");
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
     if (!out_file){
-        printf("can't open frame.bin\n");
+        printf("can't open frame.dat\n");
         fclose(of_file);
         fclose(led_file);
         return 1;
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]){
     
     printf("Done, total %d frame\n", frame_count);
     
-    FILE *check = fopen("frame.bin", "rb");
+    FILE *check = fopen("frame.dat", "rb");
     if (check){
         fseek(check, 0, SEEK_END);
         long size = ftell(check);

@@ -3,7 +3,7 @@ import random
 
 brightness = 150
 frames = [
-    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(80000)
+    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(800)
 ]
 
 TIME = 100

@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/dat/bash
 
 # LED Pattern Generator Pipeline Script
-# This script automates the generation of frame.bin from JSON files
+# This script automates the generation of frame.dat from JSON files
 # Usage: ./run_pipeline.sh <input_dir> <output_dir>
 
 # Check for correct number of arguments
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <input_dir> <output_dir>"
     echo "  input_dir  : Directory containing control.json, of.json, and led.json"
-    echo "  output_dir : Directory for output files (control.bin, OF.txt, LED.txt, frame.bin)"
+    echo "  output_dir : Directory for output files (control.dat, OF.txt, LED.txt, frame.dat)"
     exit 1
 fi
 
@@ -84,8 +84,8 @@ fi
 echo "✓ All C programs compiled successfully"
 echo ""
 
-# Step 2: Generate control.bin from control.json
-echo "Step 2: Generating control.bin from control.json"
+# Step 2: Generate control.dat from control.json
+echo "Step 2: Generating control.dat from control.json"
 echo "------------------------------------------------"
 
 # Check if control.json exists
@@ -93,29 +93,29 @@ check_file "$CONTROL_JSON" || exit 1
 
 # Run read_control program
 echo "- Processing $CONTROL_JSON..."
-"$SRC_DIR/read_control" "$CONTROL_JSON" "$OUTPUT_DIR/control.bin"
+"$SRC_DIR/read_control" "$CONTROL_JSON" "$OUTPUT_DIR/control.dat"
 
-if [ $? -eq 0 ] && [ -f "$OUTPUT_DIR/control.bin" ]; then
-    echo "✓ control.bin generated successfully"
+if [ $? -eq 0 ] && [ -f "$OUTPUT_DIR/control.dat" ]; then
+    echo "✓ control.dat generated successfully"
     
-    # Display control.bin content
-    echo "  Control.bin content:"
+    # Display control.dat content
+    echo "  Control.dat content:"
     echo -n "    fps     : "
-    od -An -t u1 -j 0 -N 1 "$OUTPUT_DIR/control.bin" | tr -d ' '
+    od -An -t u1 -j 0 -N 1 "$OUTPUT_DIR/control.dat" | tr -d ' '
     echo -n "    OF_num  : "
-    od -An -t u1 -j 1 -N 1 "$OUTPUT_DIR/control.bin" | tr -d ' '
+    od -An -t u1 -j 1 -N 1 "$OUTPUT_DIR/control.dat" | tr -d ' '
     echo -n "    LED_num : "
-    od -An -t u1 -j 2 -N 1 "$OUTPUT_DIR/control.bin" | tr -d ' '
+    od -An -t u1 -j 2 -N 1 "$OUTPUT_DIR/control.dat" | tr -d ' '
     
     # Read LED bulb counts
-    LED_NUM=$(od -An -t u1 -j 2 -N 1 "$OUTPUT_DIR/control.bin" | tr -d ' ')
+    LED_NUM=$(od -An -t u1 -j 2 -N 1 "$OUTPUT_DIR/control.dat" | tr -d ' ')
     if [ "$LED_NUM" -gt 0 ]; then
         echo -n "    LED_bulbs: "
-        od -An -t u1 -j 3 -N "$LED_NUM" "$OUTPUT_DIR/control.bin" | tr -d '\n'
+        od -An -t u1 -j 3 -N "$LED_NUM" "$OUTPUT_DIR/control.dat" | tr -d '\n'
         echo ""
     fi
 else
-    echo "✗ Failed to generate control.bin"
+    echo "✗ Failed to generate control.dat"
     exit 1
 fi
 
@@ -130,7 +130,7 @@ check_file "$OF_JSON" || exit 1
 
 # Run read_OF program
 echo "- Processing $OF_JSON..."
-"$SRC_DIR/read_OF" "$OF_JSON" "$OUTPUT_DIR/control.bin" "$OUTPUT_DIR/OF.txt"
+"$SRC_DIR/read_OF" "$OF_JSON" "$OUTPUT_DIR/control.dat" "$OUTPUT_DIR/OF.txt"
 
 if [ $? -eq 0 ] && [ -f "$OUTPUT_DIR/OF.txt" ]; then
     echo "✓ OF.txt generated successfully"
@@ -155,7 +155,7 @@ check_file "$LED_JSON" || exit 1
 
 # Run read_LED program
 echo "- Processing $LED_JSON..."
-"$SRC_DIR/read_LED" "$LED_JSON" "$OUTPUT_DIR/control.bin" "$OUTPUT_DIR/LED.txt"
+"$SRC_DIR/read_LED" "$LED_JSON" "$OUTPUT_DIR/control.dat" "$OUTPUT_DIR/LED.txt"
 
 if [ $? -eq 0 ] && [ -f "$OUTPUT_DIR/LED.txt" ]; then
     echo "✓ LED.txt generated successfully"
@@ -171,22 +171,22 @@ fi
 
 echo ""
 
-# Step 5: Generate frame.bin by merging OF.txt and LED.txt
-echo "Step 5: Generating frame.bin"
+# Step 5: Generate frame.dat by merging OF.txt and LED.txt
+echo "Step 5: Generating frame.dat"
 echo "----------------------------"
 
 # Run merge_frame program
 echo "- Merging OF.txt and LED.txt..."
-"$SRC_DIR/merge_frame" "$OUTPUT_DIR/OF.txt" "$OUTPUT_DIR/LED.txt" "$OUTPUT_DIR/control.bin" "$OUTPUT_DIR/frame.bin"
+"$SRC_DIR/merge_frame" "$OUTPUT_DIR/OF.txt" "$OUTPUT_DIR/LED.txt" "$OUTPUT_DIR/control.dat" "$OUTPUT_DIR/frame.dat"
 
-if [ $? -eq 0 ] && [ -f "$OUTPUT_DIR/frame.bin" ]; then
-    echo "✓ frame.bin generated successfully"
+if [ $? -eq 0 ] && [ -f "$OUTPUT_DIR/frame.dat" ]; then
+    echo "✓ frame.dat generated successfully"
     
-    # Display frame.bin file info
-    FRAME_SIZE=$(stat -f%z "$OUTPUT_DIR/frame.bin" 2>/dev/null || stat -c%s "$OUTPUT_DIR/frame.bin")
-    echo "  frame.bin size: $FRAME_SIZE bytes"
+    # Display frame.dat file info
+    FRAME_SIZE=$(stat -f%z "$OUTPUT_DIR/frame.dat" 2>/dev/null || stat -c%s "$OUTPUT_DIR/frame.dat")
+    echo "  frame.dat size: $FRAME_SIZE bytes"
 else
-    echo "✗ Failed to generate frame.bin"
+    echo "✗ Failed to generate frame.dat"
     exit 1
 fi
 
@@ -200,14 +200,14 @@ echo "✓ Pipeline completed successfully!"
 echo ""
 echo "Generated files in $OUTPUT_DIR/:"
 echo "--------------------------------"
-ls -lh "$OUTPUT_DIR"/*.bin "$OUTPUT_DIR"/*.txt 2>/dev/null | while read line; do
+ls -lh "$OUTPUT_DIR"/*.dat "$OUTPUT_DIR"/*.txt 2>/dev/null | while read line; do
     echo "  $line"
 done
 
 echo ""
 echo "File sizes:"
 echo "-----------"
-for file in "$OUTPUT_DIR"/control.bin "$OUTPUT_DIR"/OF.txt "$OUTPUT_DIR"/LED.txt "$OUTPUT_DIR"/frame.bin; do
+for file in "$OUTPUT_DIR"/control.dat "$OUTPUT_DIR"/OF.txt "$OUTPUT_DIR"/LED.txt "$OUTPUT_DIR"/frame.dat; do
     if [ -f "$file" ]; then
         size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
         filename=$(basename "$file")

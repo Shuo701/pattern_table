@@ -21,7 +21,7 @@ int read_number(char **ptr){
 
 int main(int argc, char *argv[]){
     if (argc != 4) {
-        printf("Usage: %s <input_LED.json> <input_Control.bin> <output_LED.txt>\n", argv[0]);
+        printf("Usage: %s <input_LED.json> <input_Control.dat> <output_LED.txt>\n", argv[0]);
         return 1;
     }
     
