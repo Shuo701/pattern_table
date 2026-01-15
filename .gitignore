@@ -2,7 +2,7 @@
 *.bin
 *.exe
 *.txt
-
+*.json
 *.o
 *.obj
 
