@@ -3,9 +3,9 @@ import sys
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
-    filename = input("Enter filename to read (default: Frame.bin): ")
+    filename = input("Enter filename to read (default: Frame.dat): ")
     if filename == "":
-        filename = "Frame.bin"
+        filename = "Frame.dat"
 
 try:
     # Read and print bytes
