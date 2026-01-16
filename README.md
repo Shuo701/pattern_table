@@ -15,6 +15,7 @@ bash ./pattern_pipeline.sh gen_blender/ output/
 ```
 fps, OF_num, Strip_num, LED_num[Strip_num]
 # 全部都是 unit8/1 byte
+# frame_size = 4 + 3 * (OF_num + ΣStrip_num), maximum = 2524 byte
 
 # example
 30 40 8 20 20 20 20 20 20 20 20 
