@@ -25,12 +25,12 @@ fps OF_num Strip_num LED_num[ Strip_num ]
 start_time (3 byte) fade (1 byte) 
 OF_color[ OF_num ][3]
 LED_color[ strip_num ][ LED_num ][3]
+
 # frame 2
 start_time (3 byte) fade (1 byte) 
 OF_color[ OF_num ][3]
 LED_color[ strip_num ][ LED_num ][3]
 ...
-
 
 # example
 # frame 1
