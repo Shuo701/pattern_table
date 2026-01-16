@@ -3,12 +3,12 @@ import random
 
 brightness = 150
 frames = [
-    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(10000)
+    [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), brightness] for _ in range(100)
 ]
 
 TIME = 100
 FADE = True
-LED_LEN = 90
+LED_LEN = 20
 
 # control.json
 control = {"fps": 30, "OFPARTS": {}, "LEDPARTS": {}}
