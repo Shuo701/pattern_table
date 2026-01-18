@@ -5,6 +5,7 @@
 *.json
 *.o
 *.obj
+*.dat
 
 *.log
 .DS_Store
