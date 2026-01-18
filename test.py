@@ -8,7 +8,6 @@ else:
         filename = "Frame.dat"
 
 try:
-    # Read and print bytes
     with open(filename, 'rb') as f:
         for i, byte in enumerate(f.read()):
             print(f"{byte}", end=' ')
