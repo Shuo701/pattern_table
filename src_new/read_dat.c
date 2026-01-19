@@ -156,8 +156,8 @@ void read_frame(uint8_t *frame_data, int frame_index, int of_num, int strip_num,
     uint32_t calculated_checksum = calculate_checksum(frame_data, frame_size_without_checksum);
     
     printf("  Checksum: stored=%08X, calculated=%08X ", stored_checksum, calculated_checksum);
-    if (stored_checksum == calculated_checksum) printf("✓ OK\n\n");
-    else printf("✗ ERROR\n\n");
+    if (stored_checksum == calculated_checksum) printf("OK\n\n");
+    else printf("ERROR\n\n");
 }
 
 
