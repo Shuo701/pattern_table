@@ -1,13 +1,13 @@
 import struct
 import sys
 
-OF_NUM = 5
-STRIP_NUM = 2
+OF_NUM = 10
+STRIP_NUM = 5
 VERSION_MAJOR = 1
-VERSION_MINOR = 0
-FRAME_NUM = 5
-LED_num_array = [10, 20]
-# 範例，這是版本1.0，有五條光纖，兩條燈條上面有{10, 20}顆LED，總共5個frame
+VERSION_MINOR = 3
+FRAME_NUM = 30
+LED_num_array = [5, 10, 15, 20, 25]
+#範例版本1.3，有10條光纖，5條燈條上面有{5, 10, 15, 20, 25}顆LED，總共30個frame
 
 def calculate_checksum(frame_data):
     #計算checksum=所有byte的和 mod 2^32
@@ -33,7 +33,7 @@ def main():
         for k in range(FRAME_NUM):
             timestamp = k * 100
             control_file.write(struct.pack('<I', timestamp))
-            # 範例，第k frame的timestamp是100*k
+            # 範例第k frame的timestamp是 100*k
     
     print("control.dat finish")
     
@@ -48,14 +48,14 @@ def main():
             fade = 1
             frame_data.append(fade)
             
-            # 範例，第k frame的OF GRB生成邏輯是: OF[i].G/R/B = (i+1/2/3 + k) mod 255
+            # 範例第k frame的OF GRB生成邏輯是: OF[i].G/R/B = (i+1/2/3 + k) mod 255
             for i in range(OF_NUM):
                 # G, R, B 各 1 byte
                 frame_data.append((i + 1 + k) % 255)  # G
                 frame_data.append((i + 2 + k) % 255)  # R
                 frame_data.append((i + 3 + k) % 255)  # B
             
-            # 範例，第k frame的LED GRB生成邏輯是: LED[i][j].G/R/B = ((i*10+j) + 1/2/3 + k) mod 255
+            # 範例第k frame的LED GRB生成邏輯是: LED[i][j].G/R/B = ((i*10+j) + 1/2/3 + k) mod 255
             for i in range(STRIP_NUM):
                 for j in range(LED_num_array[i]):
                     base = i * 10 + j
@@ -74,8 +74,7 @@ def main():
     print(f"total LED: {total_leds}")
     print(f"Version: {VERSION_MAJOR}.{VERSION_MINOR}")
     print(f"Frame_num: {FRAME_NUM}")
-    print(f"frame_size with checksum: {frame_size_with_checksum} byte")
-    print()
+    print(f"frame_size with checksum: {frame_size_with_checksum} byte\n")
 
 if __name__ == "__main__":
     main()

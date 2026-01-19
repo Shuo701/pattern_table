@@ -8,8 +8,8 @@ void read_frame(uint8_t *frame_data, int frame_index, int of_num, int strip_num,
 int read_control_file(const char *filename, uint8_t *version, uint8_t *of_num, uint8_t *strip_num, uint8_t **led_num_array, uint32_t *frame_num);
 void read_frame_file(const char *filename, int of_num, int strip_num, uint8_t *led_num_array);
 
-int main() {
-    printf("=== Start reading Pattern Table file ===\n\n");
+int main(){
+    printf("Start reading Pattern Table file\n\n");
     uint8_t version[2];
     uint8_t of_num, strip_num;
     uint8_t *led_num_array = NULL;
@@ -63,7 +63,7 @@ int read_control_file(const char *filename, uint8_t *version, uint8_t *of_num, u
 }
 void read_frame_file(const char *filename, int of_num, int strip_num, uint8_t *led_num_array){
     FILE *file = fopen(filename, "rb");
-    if (!file) {
+    if (!file){
         perror("can't open frame.dat");
         return;
     }
@@ -76,7 +76,7 @@ void read_frame_file(const char *filename, int of_num, int strip_num, uint8_t *l
     
     //算frame_size
     uint32_t total_leds = 0;
-    for (int i = 0; i < strip_num; i++) {
+    for (int i = 0; i < strip_num; i++){
         total_leds += led_num_array[i];
     }
     uint32_t frame_size_without_checksum = 4 + 1 + (of_num * 3) + (total_leds * 3);

@@ -9,7 +9,7 @@
 #define VERSION_MINOR 3
 #define FRAME_NUM 30
 const uint8_t LED_num_array[STRIP_NUM] = {5, 10, 15, 20, 25};
-//範例，這是版本1.0，有五條光纖，兩條燈條上面有{10, 20}顆LED，總共5個frame
+//範例版本1.3，有10條光纖，5條燈條上面有{5, 10, 15, 20, 25}顆LED，總共30個frame
 
 uint32_t calculate_checksum(uint8_t *frame_data, uint32_t frame_size_without_checksum){
     uint32_t sum = 0;
@@ -19,8 +19,8 @@ uint32_t calculate_checksum(uint8_t *frame_data, uint32_t frame_size_without_che
     return sum;
 }
 
-int main() {
-    //算total_leds
+int main(){
+    //算total led
     uint32_t total_leds = 0;
     for (int i = 0; i < STRIP_NUM; i++){
         total_leds += LED_num_array[i];
@@ -71,15 +71,15 @@ int main() {
         frame_data[offset] = fade;
         offset += 1;
         
-        //範例，第k frame的OF GRB生成邏輯是: OF[i].G/R/B = (i+1/2/3 + k) mod 255
-        for (int i = 0; i < OF_NUM; i++) {
+        //範例第k frame的OF GRB生成邏輯是: OF[i].G/R/B = (i+1/2/3 + k) mod 255
+        for (int i = 0; i < OF_NUM; i++){
             frame_data[offset] = (i + 1 + k) % 255;
             frame_data[offset + 1] = (i + 2 + k) % 255;
             frame_data[offset + 2] = (i + 3 + k) % 255;
             offset += 3;
         }
         
-        //範例，第k frame的LED GRB生成邏輯是: LED[i][j].G/R/B = ((i*10+j) + 1/2/3 + k) mod 255
+        //範例第k frame的LED GRB生成邏輯是: LED[i][j].G/R/B = ((i*10+j) + 1/2/3 + k) mod 255
         for (int i = 0; i < STRIP_NUM; i++){
             for (int j = 0; j < LED_num_array[i]; j++){
                 int base = i * 10 + j;
@@ -103,7 +103,7 @@ int main() {
     printf("OF_num: %d\n", OF_NUM);
     printf("Strip_num: %d\n", STRIP_NUM);
     printf("LED_num: ");
-    for (int i = 0; i < STRIP_NUM; i++) {
+    for (int i = 0; i < STRIP_NUM; i++){
         printf("%d ", LED_num_array[i]);
     }
     printf("\n");
