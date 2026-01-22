@@ -1,13 +1,12 @@
 import struct
 import sys
 
-OF_NUM = 2
+OF_NUM = 40
 STRIP_NUM = 8
 VERSION_MAJOR = 2
 VERSION_MINOR = 0
-FRAME_NUM = 360
+FRAME_NUM = 2000
 LED_num_array = [100,100,100,100,100,100,100,100]
-# 範例版本1.3，有10條光纖，5條燈條上面有{5, 10, 15, 20, 25}顆LED，總共30個frame
 
 def calculate_checksum(frame_data):
     # 計算checksum=所有byte的和 mod 2^32
@@ -31,7 +30,7 @@ def main():
         control_file.write(struct.pack('<I', FRAME_NUM))
         
         for k in range(FRAME_NUM):
-            timestamp = k * 100
+            timestamp = k * 1000
             control_file.write(struct.pack('<I', timestamp))
             # 範例第k frame的timestamp是 100*k
     
@@ -40,12 +39,15 @@ def main():
     # 2. 生成 frame.dat
     with open("frame.dat", "wb") as frame_file:
         frame_file.write(struct.pack('<BB', VERSION_MAJOR, VERSION_MINOR))
-    
+
         for k in range(FRAME_NUM):
             frame_data = bytearray()
             start_time = k * 1000
             frame_data.extend(struct.pack('<I', start_time))
-            fade = 1
+            if((k // 3) % 2 ==1):
+                fade = 1
+            else:
+                fade = 0
             frame_data.append(fade)
             
             # 根據 frame/3 的餘數決定顏色
